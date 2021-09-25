@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mtgapi
+  namespace: default
+  labels:
+    podtype: mtgapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      podtype: mtgapi
+
+  template:
+
+    metadata:
+      labels:
+        podtype: mtgapi
+
+    spec:
+      containers:
+        - name: mtgapi
+          image: gcr.io/cheaper-324003/deckassistant:latest
+
+          ports:
+            - containerPort: 8000
+
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 2
+            httpGet:
+              path: /health
+              port: 8000
+          
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 2
+            httpGet:
+              path: /health
+              port: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mtgapi
+spec:
+  type: NodePort
+  selector:
+    podtype: mtgapi
+  ports:
+    - port: 8000
+      targetPort: 8000

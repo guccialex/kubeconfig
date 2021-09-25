@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+spec:
+  rules:
+  - http:
+      paths:
+
+      - path: /?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: yewsite-nodeport
+            port:
+              number: 80
+
+
+      - path: /api/mtg/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: mtgapi
+            port:
+              number: 8000
+              p
+
+
+      - path: /api/game/1/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: singlegamepod-1
+            port:
+              number: 80
+
+      - path: /api/game/2/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: singlegamepod-2
+            port:
+              number: 80
+
+      - path: /api/game/3/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: singlegamepod-3
+            port:
+              number: 80
+
+      - path: /api/game/4/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: singlegamepod-4
+            port:
+              number: 80
+
+      - path: /api/game/5/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: singlegamepod-5
+            port:
+              number: 80
+
+      - path: /api/game/6/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: singlegamepod-6
+            port:
+              number: 80
+
+
+#ImplementationSpecific
+
+#an api for the game
+#at /api/game/{id}
+#at /api/game/{id}/get_players
+#at ws://{  }/api/game/{id}/ws/

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yewsite
+  namespace: default
+  labels:
+    app: yewsite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yewsite
+
+  template:
+
+    metadata:
+      labels:
+        app: yewsite
+
+    spec:
+      containers:
+        - name: yewsite
+          image: gcr.io/cheaper-324003/yew-website:latest
+
+          ports:
+            - containerPort: 12345
+
+          readinessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 1
+            httpGet:
+              path: /
+              port: 12345
+          
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 2
+            httpGet:
+              path: /
+              port: 12345
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: yewsite-nodeport
+spec:
+  type: NodePort
+  selector:
+    app: yewsite
+  ports:
+    - port: 80
+      targetPort: 12345
